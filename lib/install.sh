@@ -10,5 +10,6 @@ install_jar() {
 
 
 install_jar "batik-all.jar" "batik" "batik-all" "1.7-with-r608262"
+install_jar "flamingo-4.2.jar" "net.java.desktop" "flamingo" "4.2"
 
 
