@@ -1,6 +1,5 @@
 package org.n0pe.mojo.flamingo;
 
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -12,19 +11,19 @@ import org.codehaus.plexus.util.FileUtils;
 import org.jvnet.flamingo.svg.SvgTranscoder;
 import org.jvnet.flamingo.svg.TranscoderListener;
 
+public class SvgTranscoderCli
+{
 
-public class SvgTranscoderCli {
-
-
-    public static void outputUsage() {
+    public static void outputUsage()
+    {
         System.out.println("");
         System.out.println("Usage: svg2java2d svgDirectory java2dDirectory java2dPackage");
         System.out.println("");
     }
 
-
     public static void main(String[] args)
-            throws IOException {
+            throws IOException
+    {
 
         if (args.length != 3) {
             outputUsage();
@@ -48,22 +47,22 @@ public class SvgTranscoderCli {
         // System.out.println("Class files will be but in: " + java2dDirectory + File.separator+java2dPackage.replaceAll("\\.", File.separator));
 
 
-        for (File eachSvg : svgDirectory.listFiles(new FilenameFilter() {
-
+        for (File eachSvg : svgDirectory.listFiles(new FilenameFilter()
+        {
 
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(File dir, String name)
+            {
                 return name.endsWith(".svg");
             }
-
 
         })) {
             final String svgClassName = classNameFromFileName(
                     eachSvg.getName().substring(0, eachSvg.getName().length() - 4)) + "Icon";
 
 
-            final File java2dClassFileDirectory = new File(java2dDirectory + File.separator +
-                    java2dPackage.replaceAll("\\.", File.separator));
+            final File java2dClassFileDirectory = new File(java2dDirectory + File.separator
+                    + java2dPackage.replaceAll("\\.", File.separator));
 
             FileUtils.forceMkdir(java2dClassFileDirectory);
 
@@ -79,33 +78,33 @@ public class SvgTranscoderCli {
                 final SvgTranscoder transcoder = new SvgTranscoder(eachSvg.toURI().toURL().toString(), svgClassName);
                 transcoder.setJavaToImplementResizableIconInterface(true);
                 transcoder.setJavaPackageName(java2dPackage);
-                transcoder.setListener(new TranscoderListener() {
-
+                transcoder.setListener(new TranscoderListener()
+                {
 
                     @Override
-                    public Writer getWriter() {
+                    public Writer getWriter()
+                    {
                         return pw;
                     }
 
-
                     @Override
-                    public void finished() {
+                    public void finished()
+                    {
                         latch.countDown();
                     }
-
 
                 });
                 transcoder.transcode();
                 latch.await();
             } catch (Exception e) {
                 // e.printStackTrace();
-                System.err.println("Unable to transcode: "+eachSvg.getAbsolutePath());
+                System.err.println("Unable to transcode: " + eachSvg.getAbsolutePath());
             }
         }
     }
 
-
-    private static String classNameFromFileName(final String filename) {
+    private static String classNameFromFileName(final String filename)
+    {
         String className = filename.toUpperCase(Locale.ENGLISH).toLowerCase();
         className = className.replace('-', ' ');
         className = className.replace('_', ' ');
@@ -114,10 +113,10 @@ public class SvgTranscoderCli {
         return className;
     }
 
-
-    private static String upperCaseFirstLetterOfWords(final String input) {
-        if (input == null ||
-                input.length() < 1) {
+    private static String upperCaseFirstLetterOfWords(final String input)
+    {
+        if (input == null
+                || input.length() < 1) {
             return input;
         }
         char ch;
@@ -137,6 +136,5 @@ public class SvgTranscoderCli {
         }
         return sb.toString();
     }
-
 
 }
