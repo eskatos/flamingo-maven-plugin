@@ -107,5 +107,16 @@
             <url>https://codebox.codeartisans.org/nexus/content/groups/public</url>
         </repository>
     </repositories>
-    
+   
+    <distributionManagement>
+        <repository>
+            <id>codeartisans-public-releases</id>
+            <url>https://codebox.codeartisans.org/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>codeartisans-public-snapshots</id>
+            <url>https://codebox.codeartisans.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+ 
 </project>
