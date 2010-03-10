@@ -30,21 +30,21 @@ public class FlamingoMojo
     private File java2dDirectory;
 
     @Override
-    public void execute()
+    public final void execute()
             throws MojoExecutionException, MojoFailureException
     {
-        if (getLog().isDebugEnabled()) {
-            System.out.println("Will process *.svg in: " + svgDirectory);
-            System.out.println("ResizableIcons will have package: " + java2dPackage);
-            System.out.println("Class files will be but in: " + java2dDirectory + File.separator
-                    + java2dPackage.replaceAll("\\.", File.separator));
+        if ( getLog().isDebugEnabled() ) {
+            getLog().debug( "Will process *.svg in: " + svgDirectory );
+            getLog().debug( "ResizableIcons will have package: " + java2dPackage );
+            getLog().debug( "Class files will be but in: " + java2dDirectory + File.separator
+                    + java2dPackage.replaceAll( "\\.", File.separator ) );
         }
         try {
-            SvgTranscoderCli.main(new String[]{svgDirectory.getAbsolutePath(),
-                                               java2dDirectory.getAbsolutePath(),
-                                               java2dPackage});
-        } catch (IOException ex) {
-            throw new MojoFailureException(ex.getMessage(), ex);
+            SvgTranscoderCli.main( new String[]{ svgDirectory.getAbsolutePath(),
+                                                 java2dDirectory.getAbsolutePath(),
+                                                 java2dPackage } );
+        } catch ( IOException ex ) {
+            throw new MojoFailureException( ex.getMessage(), ex );
         }
     }
 
