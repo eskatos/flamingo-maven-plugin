@@ -1,67 +1,27 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.n0pe.mojo</groupId>
+
+    <parent>
+        <groupId>org.codeartisans</groupId>
+        <artifactId>codeartisans-parent</artifactId>
+        <version>2</version>
+    </parent>
+
+    <groupId>org.codeartisans.mojo</groupId>
     <artifactId>flamingo-maven-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
     <version>1.0.0-SNAPSHOT</version>
+
     <name>flamingo-maven-plugin</name>
-    <url>http://maven.apache.org</url>
-    <properties>
-        <mainClass>org.n0pe.mojo.flamingo.SvgTranscoderCli</mainClass>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <packaging>maven-plugin</packaging>
 
-    <!--
-        mvn clean install org.n0pe.mojo:flamingo-maven-plugin:transcode
-    -->
-    <build>
-        <plugins>
-            <!-- Self execution for testing purpose -->
-            <!--plugin>
-                <groupId>org.n0pe.mojo</groupId>
-                <artifactId>flamingo-maven-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-                <configuration>
-                    <svgDirectory>src/main/resources</svgDirectory>
-                    <java2dPackage>org.freedesktop.tango.plop</java2dPackage>
-                </configuration>
-            </plugin-->
+    <scm>
+        <developerConnection>scm:git:ssh://gitosis@codebox.codeartisans.org/${project.artifactId}.git</developerConnection>
+    </scm>
 
-            <!-- Build Config -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1-beta-1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>${mainClass}</mainClass>
-                    <arguments>
-                        <arg>src/main/resources</arg>
-                        <arg>target/generated-sources/java</arg>
-                        <arg>org.freedesktop.tango.plop</arg>
-                    </arguments>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>net.java.desktop</groupId>
@@ -86,17 +46,17 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>2.0.10</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-project</artifactId>
-            <version>2.0.10</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.5</version>
+            <version>4.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -107,16 +67,5 @@
             <url>https://codebox.codeartisans.org/nexus/content/groups/public</url>
         </repository>
     </repositories>
-   
-    <distributionManagement>
-        <repository>
-            <id>codeartisans-public-releases</id>
-            <url>https://codebox.codeartisans.org/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>codeartisans-public-snapshots</id>
-            <url>https://codebox.codeartisans.org/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
- 
+
 </project>
