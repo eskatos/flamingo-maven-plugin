@@ -17,7 +17,7 @@ import org.jvnet.flamingo.svg.TranscoderListener;
 /**
  * @goal transcode
  */
-public class SvgTranscoderMojo
+public final class SvgTranscoderMojo
         extends AbstractMojo
 {
 
@@ -36,16 +36,6 @@ public class SvgTranscoderMojo
      * @required
      */
     private File java2dDirectory;
-    private static FilenameFilter svgFilter = new FilenameFilter()
-    {
-
-        @Override
-        public boolean accept( File dir, String name )
-        {
-            return name.endsWith( ".svg" );
-        }
-
-    };
 
     @Override
     public void execute()
@@ -60,9 +50,9 @@ public class SvgTranscoderMojo
 
             FileUtils.forceMkdir( java2dDirectory );
 
-            for ( File eachSvg : svgDirectory.listFiles( svgFilter ) ) {
+            for ( File eachSvg : svgDirectory.listFiles( new SvgFilenameFilter() ) ) {
 
-                final String svgClassName = classNameFromFileName( eachSvg.getName().substring( 0, eachSvg.getName().length() - 4 ) ) + "Icon";
+                final String svgClassName = classNameFromFileName( eachSvg.getName() ) + "Icon";
                 final File java2dClassFileDirectory = new File( java2dDirectory + File.separator + java2dPackage.replaceAll( "\\.", File.separator ) );
                 final String javaClassFilename = java2dClassFileDirectory + File.separator + svgClassName + ".java";
 
@@ -71,33 +61,17 @@ public class SvgTranscoderMojo
                 try {
                     final CountDownLatch latch = new CountDownLatch( 1 );
                     final PrintWriter pw = new PrintWriter( javaClassFilename );
-
                     final SvgTranscoder transcoder = new SvgTranscoder( eachSvg.toURI().toURL().toString(), svgClassName );
                     transcoder.setJavaToImplementResizableIconInterface( true );
                     transcoder.setJavaPackageName( java2dPackage );
-                    transcoder.setListener( new TranscoderListener()
-                    {
-
-                        @Override
-                        public Writer getWriter()
-                        {
-                            return pw;
-                        }
-
-                        @Override
-                        public void finished()
-                        {
-                            latch.countDown();
-                        }
-
-                    } );
+                    transcoder.setListener( new SvgTranscodeListener( latch, pw ) );
                     transcoder.transcode();
                     latch.await();
-                } catch ( Exception ex ) {
-                    if ( getLog().isDebugEnabled() ) {
-                        getLog().debug( ex.getMessage(), ex );
+                } catch ( InterruptedException ex ) {
+                    if ( getLog().isErrorEnabled() ) {
+                        getLog().error( ex.getMessage(), ex );
                     }
-                    System.err.println( "Unable to transcode: " + eachSvg.getAbsolutePath() );
+                    getLog().error( "Unable to transcode: " + eachSvg.getAbsolutePath() );
                 }
             }
         } catch ( IOException ex ) {
@@ -105,14 +79,59 @@ public class SvgTranscoderMojo
         }
     }
 
+    private static class SvgFilenameFilter
+            implements FilenameFilter
+    {
+
+        @Override
+        public boolean accept( File dir, String name )
+        {
+            return name.endsWith( ".svg" );
+        }
+
+    }
+
+    private static class SvgTranscodeListener
+            implements TranscoderListener
+    {
+
+        private final CountDownLatch latch;
+        private final Writer writer;
+
+        public SvgTranscodeListener( CountDownLatch latch, Writer writer )
+        {
+            this.latch = latch;
+            this.writer = writer;
+        }
+
+        @Override
+        public Writer getWriter()
+        {
+            return writer;
+        }
+
+        @Override
+        public void finished()
+        {
+            latch.countDown();
+        }
+
+    }
+
     private static String classNameFromFileName( final String filename )
     {
-        String className = filename.toUpperCase( Locale.ENGLISH ).toLowerCase();
+        String className = removeExtension( filename );
+        className = filename.toUpperCase( Locale.ENGLISH ).toLowerCase();
         className = className.replace( '-', ' ' );
         className = className.replace( '_', ' ' );
         className = upperCaseFirstLetterOfWords( className );
         className = className.replace( " ", "" );
         return className;
+    }
+
+    /* package */ static String removeExtension( String filename )
+    {
+        return filename.substring( 0, filename.lastIndexOf( "." ) );
     }
 
     private static String upperCaseFirstLetterOfWords( final String input )
