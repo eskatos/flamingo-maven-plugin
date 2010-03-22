@@ -121,7 +121,9 @@ public final class SvgTranscoderMojo
     private static String classNameFromFileName( final String filename )
     {
         String className = removeExtension( filename );
+        // CHECKSTYLE:OFF We use the Locale.ENGLISH on purpose to get rid of any special characters
         className = filename.toUpperCase( Locale.ENGLISH ).toLowerCase();
+        // CHECKSTYLE:ON
         className = className.replace( '-', ' ' );
         className = className.replace( '_', ' ' );
         className = upperCaseFirstLetterOfWords( className );
@@ -131,7 +133,7 @@ public final class SvgTranscoderMojo
 
     /* package */ static String removeExtension( String filename )
     {
-        return filename.substring( 0, filename.lastIndexOf( "." ) );
+        return filename.substring( 0, filename.lastIndexOf( '.' ) );
     }
 
     private static String upperCaseFirstLetterOfWords( final String input )
