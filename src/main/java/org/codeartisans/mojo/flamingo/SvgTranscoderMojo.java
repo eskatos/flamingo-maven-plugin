@@ -7,12 +7,15 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+
 import org.codehaus.plexus.util.FileUtils;
-import org.jvnet.flamingo.svg.SvgTranscoder;
-import org.jvnet.flamingo.svg.TranscoderListener;
+
+import org.pushingpixels.flamingo.api.svg.SvgTranscoder;
+import org.pushingpixels.flamingo.api.svg.TranscoderListener;
 
 /**
  * @goal transcode
