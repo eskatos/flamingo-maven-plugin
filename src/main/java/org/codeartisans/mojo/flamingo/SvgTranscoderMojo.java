@@ -24,6 +24,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -37,59 +38,83 @@ public final class SvgTranscoderMojo
         extends AbstractMojo
 {
 
+    // Configuration ---------------------------------------------------------------------------------------------------
     /**
      * @parameter
      * @required
      */
-    private File svgDirectory;
+    private File sourceDirectory;
     /**
      * @parameter
      * @required
      */
-    private String java2dPackage;
+    private String outputPackage;
     /**
-     * @parameter default-value="${project.build.directory}/generated-sources/java"
-     * @required
+     * @parameter default-value="false"
      */
-    private File java2dDirectory;
+    private boolean implementsResizableIcon;
+    /**
+     * @parameter default-value="true"
+     */
+    private boolean stopOnFailure;
+    // Context ---------------------------------------------------------------------------------------------------------
+    /**
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     @Override
     public void execute()
             throws MojoExecutionException, MojoFailureException
     {
-        if ( getLog().isDebugEnabled() ) {
-            getLog().debug( "Will process *.svg in: " + svgDirectory );
-            getLog().debug( "ResizableIcons will have package: " + java2dPackage );
-            getLog().debug( "Class files will be but in: " + java2dDirectory + File.separator + java2dPackage.replaceAll( "\\.", File.separator ) );
-        }
         try {
 
-            FileUtils.forceMkdir( java2dDirectory );
+            File generatedSources = new File( new File( new File( project.getBuild().getDirectory() ), "generated-sources" ), "flamingo" );
+            FileUtils.forceMkdir( generatedSources );
 
-            for ( File eachSvg : svgDirectory.listFiles( new SvgFilenameFilter() ) ) {
+            project.addCompileSourceRoot( generatedSources.getAbsolutePath() );
 
-                final String svgClassName = classNameFromFileName( eachSvg.getName() ) + "Icon";
-                final File java2dClassFileDirectory = new File( java2dDirectory + File.separator + java2dPackage.replaceAll( "\\.", File.separator ) );
-                final String javaClassFilename = java2dClassFileDirectory + File.separator + svgClassName + ".java";
+            File[] svgFiles = sourceDirectory.listFiles( new SvgFilenameFilter() );
+            int transcoded = 0;
+            int toTranscode = svgFiles.length;
+
+            for ( File eachSvg : svgFiles ) {
+
+                String svgClassName = classNameFromFileName( eachSvg.getName() ) + "Icon";
+                File java2dClassFileDirectory = new File( generatedSources + File.separator + outputPackage.replaceAll( "\\.", File.separator ) );
+                String javaClassFilename = java2dClassFileDirectory + File.separator + svgClassName + ".java";
 
                 FileUtils.forceMkdir( java2dClassFileDirectory );
 
                 try {
-                    final CountDownLatch latch = new CountDownLatch( 1 );
-                    final PrintWriter pw = new PrintWriter( javaClassFilename );
-                    final SvgTranscoder transcoder = new SvgTranscoder( eachSvg.toURI().toURL().toString(), svgClassName );
-                    transcoder.setJavaToImplementResizableIconInterface( true );
-                    transcoder.setJavaPackageName( java2dPackage );
+
+                    CountDownLatch latch = new CountDownLatch( 1 );
+                    PrintWriter pw = new PrintWriter( javaClassFilename );
+                    SvgTranscoder transcoder = new SvgTranscoder( eachSvg.toURI().toURL().toString(), svgClassName );
+                    transcoder.setJavaToImplementResizableIconInterface( implementsResizableIcon );
+                    transcoder.setJavaPackageName( outputPackage );
                     transcoder.setListener( new SvgTranscodeListener( latch, pw ) );
                     transcoder.transcode();
                     latch.await();
+
+                    transcoded++;
+
                 } catch ( Throwable ex ) {
-                    if ( getLog().isDebugEnabled() ) {
-                        getLog().debug( ex.getMessage(), ex );
+                    if ( stopOnFailure ) {
+                        throw new MojoExecutionException( "Unable to transcode: " + eachSvg.getAbsolutePath(), ex );
+                    } else {
+                        getLog().warn( "Unable to transcode: " + eachSvg.getAbsolutePath() );
+                        if ( getLog().isDebugEnabled() ) {
+                            getLog().debug( ex.getMessage(), ex );
+                        }
                     }
-                    getLog().error( "Unable to transcode: " + eachSvg.getAbsolutePath() );
                 }
             }
+
+            getLog().info( "Transcoded " + transcoded + '/' + toTranscode + " svg files in " + outputPackage + " package" );
+
         } catch ( IOException ex ) {
             throw new MojoFailureException( ex.getMessage(), ex );
         }
