@@ -23,31 +23,14 @@
             <artifactId>flamingo</artifactId>
             <version>6.2</version>
         </dependency>
-        <!--
-            http://svn.apache.org/viewvc/xmlgraphics/batik/trunk/
-            http://people.apache.org/builds/xml-batik/
-
-            Tango cannot be processed anymore
-            Got this :
-
-        org.w3c.dom.DOMException: The current document is unable to create an element of the requested type (namespace: http://www.w3.org/2000/svg, name: midPointStop).
-                at org.apache.batik.dom.AbstractNode.createDOMException(Unknown Source)
-                at org.apache.batik.dom.svg.SVGDOMImplementation.createElementNS(Unknown Source)
-                at org.apache.batik.dom.svg.SVGOMDocument.createElementNS(Unknown Source)
-                at org.apache.batik.dom.util.SAXDocumentFactory.startElement(Unknown Source)
-                at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:501)
-
-
-            Maybe removing midPointStop from svg files would do the trick
-            See http://lists.w3.org/Archives/Public/www-svg/2003Jun/0045.html
-        -->
+        <!-- We need r608262 but last version 1.7 was released before that -->
         <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-bridge</artifactId>
-            <version>1.8pre</version>
+            <groupId>org.codeartisans.thirdparties.swing</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.8pre-r1084380-SNAPSHOT</version>
         </dependency>
 
-        <!-- Maven plugin -->
+        <!-- Maven Plugin -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>

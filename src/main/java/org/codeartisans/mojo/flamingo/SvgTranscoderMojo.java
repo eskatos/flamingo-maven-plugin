@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2009, Paul Merlin. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package org.codeartisans.mojo.flamingo;
 
 import java.io.File;
@@ -70,9 +83,9 @@ public final class SvgTranscoderMojo
                     transcoder.setListener( new SvgTranscodeListener( latch, pw ) );
                     transcoder.transcode();
                     latch.await();
-                } catch ( InterruptedException ex ) {
-                    if ( getLog().isErrorEnabled() ) {
-                        getLog().error( ex.getMessage(), ex );
+                } catch ( Throwable ex ) {
+                    if ( getLog().isDebugEnabled() ) {
+                        getLog().debug( ex.getMessage(), ex );
                     }
                     getLog().error( "Unable to transcode: " + eachSvg.getAbsolutePath() );
                 }
@@ -130,6 +143,7 @@ public final class SvgTranscoderMojo
         className = className.replace( '-', ' ' );
         className = className.replace( '_', ' ' );
         className = upperCaseFirstLetterOfWords( className );
+        className = className.replace( ".", "" );
         className = className.replace( " ", "" );
         return className;
     }
