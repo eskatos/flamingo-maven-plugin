@@ -24,7 +24,7 @@ Here is a quick example:
 		    <goal>transcode</goal>
 		</goals>
 		<configuration>
-		    <sourceDirectory>${project.build.directory}/path/to/svg/directory</sourceDire
+		    <sourceDirectory>${project.basedir}/src/main/svg</sourceDirectory>
 		    <outputPackage>com.example.icons</outputPackage>
 		    <implementsResizableIcon>true</implementsResizableIcon><!-- Defaults to false -->
 		    <stopOnFailure>false</stopOnFailure> <!-- Defaults to true -->
