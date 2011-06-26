@@ -16,6 +16,30 @@
     <name>flamingo-maven-plugin</name>
     <packaging>maven-plugin</packaging>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>Copyrights retained by each developer.</comments>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>scm:git:git@github.com:eskatos/flamingo-maven-plugin.git</url>
+    <connection>scm:git:git@github.com:eskatos/flamingo-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:eskatos/flamingo-maven-plugin.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>paul@nosphere.org</id>
+      <name>Paul Merlin</name>
+      <email>paul@nosphere.org</email>
+    </developer>
+  </developers>
+
+
     <dependencies>
         <!-- 2011 Fork of flamingo, see http://insubstantial.github.com/insubstantial/ -->
         <dependency>
