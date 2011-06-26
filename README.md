@@ -16,6 +16,7 @@ Here is a quick example:
     <plugin>
 	<groupId>org.codeartisans</groupId>
 	<artifactId>flamingo-maven-plugin</artifactId>
+        <version>1.1</version>
 	<executions>
 	    <execution>
 		<id>actions</id>
