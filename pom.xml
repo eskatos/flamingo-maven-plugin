@@ -11,7 +11,7 @@
 
     <groupId>org.codeartisans</groupId>
     <artifactId>flamingo-maven-plugin</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
 
     <name>flamingo-maven-plugin</name>
     <packaging>maven-plugin</packaging>
