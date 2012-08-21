@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Matcher;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -83,7 +84,7 @@ public final class SvgTranscoderMojo
             for ( File eachSvg : svgFiles ) {
 
                 String svgClassName = classNameFromFileName( eachSvg.getName() ) + "Icon";
-                File java2dClassFileDirectory = new File( generatedSources + File.separator + outputPackage.replaceAll( "\\.", File.separator ) );
+                File java2dClassFileDirectory = new File( generatedSources + File.separator + outputPackage.replaceAll( "\\.", Matcher.quoteReplacement(File.separator )) );
                 String javaClassFilename = java2dClassFileDirectory + File.separator + svgClassName + ".java";
 
                 FileUtils.forceMkdir( java2dClassFileDirectory );
